@@ -1,3 +1,4 @@
+from emoji import emojize
 class AFD:
     def __init__(self,input):
         self.input=input
@@ -33,7 +34,7 @@ class AFD:
                 dictionar[element] = {}
         cuvant_intrare = input("Introduceti cuvantul=")
         if cuvant_intrare == "" and stare_initiala in stari_finale:
-            print('Cuvant acceptat\n')
+            print('Cuvant acceptat', emojize(':smiling_face_with_sunglasses:'), '\n')
         else:
             stare_curenta = stare_initiala
             print('Starea', stare_curenta, sep=' ', end='')
@@ -49,9 +50,9 @@ class AFD:
             else:
                 print()
             if stare_curenta in stari_finale:
-                print('Cuvant acceptat\n')
+                print('Cuvant acceptat', emojize(':smiling_face_with_sunglasses:'), '\n')
             else:
-                print("Cuvant respins")
+                print("Cuvant respins", emojize(':face_with_raised_eyebrow:'))
 
 class AFN:
     def __init__(self,input):
@@ -98,7 +99,7 @@ class AFN:
 
         cuvant_intrare = input("Introduceti cuvantul=")
         if stare_initiala in stari_finale and cuvant_intrare == '':
-            print('Cuvant acceptat\n')
+            print('Cuvant acceptat', emojize(':smiling_face_with_sunglasses:'), '\n')
         else:
             lista_poz = [[stare_initiala]]
             lista_pt_afis = []
@@ -127,7 +128,7 @@ class AFN:
                     accept = True
                     break
             if accept == True:
-                print('Cuvant acceptat\n')
+                print('Cuvant acceptat', emojize(':smiling_face_with_sunglasses:'), '\n')
                 for element in range(len(lista_poz)):
 
                     print('Traseu ', element + 1, ':', sep='')
@@ -150,16 +151,16 @@ class AFN:
                         print(lista_pt_afis[element][-2], '----> Starea ', lista_pt_afis[element][-1], sep='')
                         j += 1
             else:
-                print('Cuvant respins')
+                print('Cuvant respins', emojize(':face_with_raised_eyebrow:'))
 def meniu():
     print('START: Apasati 1','EXIT: Apasati 0',sep='\n')
     tasta=int(input())
     if tasta!=1:
-        print('SFARSIT')
+        print('SFARSIT',emojize(':slightly_frowning_face:'))
     else:
-        print('\nBuna alegere')
+        print('\nBuna alegere',emojize(':thumbs_up:'))
         print('Pentru a schimba inputul, verificati fisierele input_afd.txt si input_afn.txt\n')
-        print('Ce doriti sa verificati?\n','AFD: Apasati 1\n','AFN: Apasati 2\n','Nimic, la revedere: Apasati 0',sep='')
+        print('Ce doriti sa verificati?\n','AFD: Apasati 1\n','AFN: Apasati 2\n','Nimic, la revedere',emojize(':waving_hand:'),': Apasati 0',sep='')
         tasta = int(input())
         while tasta!=0:
             if tasta==1:
@@ -168,8 +169,8 @@ def meniu():
             else:
                 p2 = AFN("input_afn.txt")
                 p2.afn()
-            print('\nMai doriti sa efectuati altceva?\n','Inca un AFD: Apasati 1\n','Inca un AFN: Apasati 2\n','Nu, la revedere: Apasati 0',sep='')
+            print('\nMai doriti sa efectuati altceva?\n','Inca un AFD: Apasati 1\n','Inca un AFN: Apasati 2\n','Nu, la revedere',emojize(':waving_hand:'),': Apasati 0',sep='')
             tasta = int(input())
-        print("SFARSIT")
+        print("SFARSIT",emojize(':grinning_face:'))
 
 meniu()
