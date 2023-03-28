@@ -47,6 +47,7 @@ class alfabet_AFN:
             return True
         else:
             lista_poz = [[self.stare_initiala]]
+            lista_pt_afis = []
             for litera in cuvant_intrare:
                 j = 0
                 while j < len(lista_poz):
@@ -62,7 +63,9 @@ class alfabet_AFN:
                         del lista_poz[j]
                         j += len(self.dictionar[stare_curenta][litera])
                     else:
-                        j+=1
+                        if lista_poz[j] not in lista_pt_afis:
+                            lista_pt_afis.append(lista_poz[j])
+                            del lista_poz[j]
             accept = False
             for element in lista_poz:
                 if element[-1] in self.stari_finale:
@@ -73,7 +76,7 @@ class alfabet_AFN:
             return False
 
 class generator:
-    ob = alfabet_AFN('input_afd.txt')                               #folosesc clasa de mai sus pentru a imi genera lista de muchii
+    ob = alfabet_AFN('input_generator.txt')                               #folosesc clasa de mai sus pentru a imi genera lista de muchii
     ob.alfabet()
     lista = ob.lista_muchii
     def __init__(self,lungime_max):
@@ -97,7 +100,7 @@ class generator:
         elif k == self.lungime_max and len(self.l_noua) > 0:
             self.l_noua.pop()
 
-p2=generator(3)
+p2=generator(6)
 p2.back(0,[])
 for cuvant in p2.lista_cuvinte:
     print(*cuvant)
