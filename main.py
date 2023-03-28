@@ -153,7 +153,7 @@ class AFN:
             else:
                 print('Cuvant respins', emojize(':face_with_raised_eyebrow:'))
 
-class alfabet_AFN:
+class ALFABET_AFN:
     def __init__(self,input):
         self.input=input
     def alfabet(self):
@@ -231,7 +231,7 @@ class alfabet_AFN:
             return False
 
 class GENERATOR:
-    ob = alfabet_AFN('input_generator.txt')                               #folosesc clasa de mai sus pentru a imi genera lista de muchii
+    ob = ALFABET_AFN('input_generator.txt')                               #folosesc clasa de mai sus pentru a imi genera lista de muchii
     ob.alfabet()
     lista = ob.lista_muchii
     def __init__(self,lungime_max):
