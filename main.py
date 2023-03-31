@@ -1,4 +1,5 @@
 from emoji import emojize
+import copy
 class AFD:
     def __init__(self,input):
         self.input=input
@@ -157,6 +158,7 @@ class ALFABET_AFN:
     def __init__(self,input):
         self.input=input
     def alfabet(self):
+        self.indicator_lambda = False
         self.dictionar = {}
         self.lista_stari = []
         self.lista_muchii = []
@@ -171,6 +173,7 @@ class ALFABET_AFN:
                 if rand[0] not in self.lista_stari:
                     self.lista_stari.append(rand[0])
                 if rand[1] not in self.lista_muchii:
+                    self.indicator_lambda = True
                     self.lista_muchii.append(rand[1])
                 if rand[2] not in self.lista_stari:
                     self.lista_stari.append(rand[2])
@@ -196,6 +199,44 @@ class ALFABET_AFN:
             if element not in self.dictionar:
                 self.dictionar[element] = {}
 
+    def get(self,dictionar, stare_curenta, lista, simbol, vizitate):                #obtin λ-inchiderile sau starea urmatoare
+        if stare_curenta in vizitate:                                               #verific ca starea curenta sa nu fie deja vizitata
+            return
+        vizitate.add(stare_curenta)
+        if simbol in dictionar[stare_curenta]:
+            for element in dictionar[stare_curenta][simbol]:
+                if simbol == 'l':
+                    if stare_curenta not in lista:
+                        lista.append(stare_curenta)
+                    self.get(dictionar, element, lista, simbol, vizitate)
+            if simbol != 'l' and dictionar[stare_curenta][simbol] not in lista:
+                lista.extend(dictionar[stare_curenta][simbol])
+        else:
+            if stare_curenta not in lista and simbol == 'l':
+                lista.append(stare_curenta)
+
+    def transformare(self,stare_curenta, simbol, di, stari_finale, l, l_finale):    #pentru starea curenta, obtin noile muchii, facand
+        viz = set()                                                                 #mai intai λ-inchiderile, apoi starile urmatoare si in final, λ-inchiderile
+        self.get(di, stare_curenta, l, 'l', viz)                                    #ce ajung sa fie noile stari urmatoare
+
+        for stare in l:                                                             #verific de fiecare data daca starea curenta a devenit finala
+            if stare in stari_finale and stare_curenta not in l_finale:
+                l_finale.append(stare_curenta)
+        l_copie = []
+        viz.clear()
+
+        for stare in l:
+            self.get(di, stare, l_copie, simbol, viz)
+
+        l.clear()
+        viz.clear()
+        for stare in l_copie:
+            self.get(di, stare, l, 'l', viz)
+
+        for stare in l_finale:
+            if stare not in stari_finale:
+                stari_finale.append(stare)
+        return l
 
     def verif_automat(self,cuvant_intrare):
         if self.stare_initiala in self.stari_finale and cuvant_intrare == '':
@@ -235,6 +276,19 @@ class GENERATOR:
     ob.alfabet()
     lista = ob.lista_muchii
     def __init__(self,lungime_max):
+        if self.ob.indicator_lambda == True:                            #verific daca automatul este un λ-NFA
+            dictionar_copie = copy.deepcopy(self.ob.dictionar)
+
+            for mini_dictionar in dictionar_copie:                      #transform vechiul dictionar ce contine λ, intr-unul ce nu are,
+                for cheie in self.ob.lista_muchii:                      #luand fiecare stare cu fiecare muchie
+                    if cheie != 'l':
+                        l = []
+                        l_finale = []
+                        self.ob.dictionar[mini_dictionar][cheie] = self.ob.transformare(mini_dictionar, cheie, dictionar_copie,
+                                                                              self.ob.stari_finale, l, l_finale)
+                    elif cheie == 'l' and cheie in self.ob.dictionar[mini_dictionar]:
+                        self.ob.dictionar[mini_dictionar].pop(cheie)
+
         self.lungime_max=lungime_max
         self.lista_cuvinte=[]
         self.l_noua=[]
