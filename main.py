@@ -315,7 +315,7 @@ def meniu():
         print('SFARSIT',emojize(':slightly_frowning_face:'))
     else:
         print('\nBuna alegere',emojize(':thumbs_up:'))
-        print('Pentru a schimba inputul, verificati fisierele input_afd.txt si input_afn.txt\n')
+        print('Pentru a schimba inputul, verificati fisierele input_afd.txt, input_afn.txt si input_generator.txt\n')
         print('Ce doriti sa efectuati?\n','AFD: Apasati 1\n','AFN: Apasati 2\n','GENERAREA TUTUROR CUVINTELOR ACCEPTATE CU O LUNGIME MAXIMA N: Apasati 3\n','Nimic, la revedere',emojize(':waving_hand:'),': Apasati 0',sep='')
         tasta = int(input())
         while tasta!=0:
