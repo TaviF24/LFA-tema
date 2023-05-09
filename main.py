@@ -173,7 +173,8 @@ class ALFABET_AFN:
                 if rand[0] not in self.lista_stari:
                     self.lista_stari.append(rand[0])
                 if rand[1] not in self.lista_muchii:
-                    self.indicator_lambda = True
+                    if rand[1]=='l':
+                        self.indicator_lambda = True
                     self.lista_muchii.append(rand[1])
                 if rand[2] not in self.lista_stari:
                     self.lista_stari.append(rand[2])
@@ -238,6 +239,15 @@ class ALFABET_AFN:
                 stari_finale.append(stare)
         return l
 
+    def initial_lambda_closer(self, stare_curenta, di, stari_finale, l, l_finale):   #fac λ-inchiderea starii initiale
+        viz = set()
+        self.get(di, stare_curenta, l, 'l', viz)
+
+        for stare in l:                                                              # verific de fiecare data daca starea curenta a devenit finala
+            if stare in stari_finale and stare_curenta not in l_finale:
+                l_finale.append(stare_curenta)
+
+        return l
     def verif_automat(self,cuvant_intrare):
         if self.stare_initiala in self.stari_finale and cuvant_intrare == '':
             return True
@@ -308,6 +318,114 @@ class GENERATOR:
                     self.l_noua.pop()
         elif k == self.lungime_max and len(self.l_noua) > 0:
             self.l_noua.pop()
+class CONVERTER:
+    ob = ALFABET_AFN('input_converter.txt')
+    ob.alfabet()
+    lista = ob.lista_muchii
+    lambda_inchidere_stare_intitiala=[]
+    l_pt_lambda_inchidere_stare_intitiala = []
+    l_finale_pt_lambda_inchidere_stare_intitiala = []
+    def __init__(self):
+        if self.ob.indicator_lambda == True:
+            self.lambda_inchidere_stare_intitiala=self.ob.initial_lambda_closer(self.ob.stare_initiala,self.ob.dictionar,self.ob.stari_finale,self.l_pt_lambda_inchidere_stare_intitiala,self.l_finale_pt_lambda_inchidere_stare_intitiala)
+            dictionar_copie = copy.deepcopy(self.ob.dictionar)
+
+            for mini_dictionar in dictionar_copie:                  #transform vechiul dictionar ce contine λ, intr-unul ce nu are,
+                for cheie in self.ob.lista_muchii:                  #luand fiecare stare cu fiecare muchie
+                    if cheie != 'l':
+                        l = []
+                        l_finale = []
+                        self.ob.dictionar[mini_dictionar][cheie] = self.ob.transformare(mini_dictionar, cheie, dictionar_copie,
+                                                                              self.ob.stari_finale, l, l_finale)
+                    elif cheie == 'l' and cheie in self.ob.dictionar[mini_dictionar]:
+                        self.ob.dictionar[mini_dictionar].pop(cheie)
+
+    def convertire(self):
+        obiect = CONVERTER()
+        lista_stari_noi = []
+        lista_stari_vechi_din_noi = []
+        stari_finale_pt_noul_afd = []
+
+        obiect.lambda_inchidere_stare_intitiala.sort()
+        cheie = "".join(obiect.lambda_inchidere_stare_intitiala)
+        if bool(obiect.l_finale_pt_lambda_inchidere_stare_intitiala):                       #verific daca starea intitala noua e si finala
+            stari_finale_pt_noul_afd.append(cheie)
+
+        stare_noua = []
+        dictionar_afd = {}
+        indicator_finale = False
+        for muchie in obiect.ob.lista_muchii:                                                #iau fiecare muchie si daca e diferita de lambda
+            if muchie != 'l':                                                                #iau fiecare stare veche din starea noua si
+                for stare in obiect.lambda_inchidere_stare_intitiala:                        #obtin starile in care se duc
+                    if muchie in obiect.ob.dictionar[stare]:
+                        for stare_veche in obiect.ob.dictionar[stare][muchie]:
+                            if stare_veche not in stare_noua:                                #creez o stare noua cu vechile stari
+                                stare_noua.append(stare_veche)
+                                if stare_veche in obiect.ob.stari_finale:
+                                    indicator_finale = True
+                stare_noua.sort()
+                if indicator_finale == True and "".join(stare_noua) not in stari_finale_pt_noul_afd and stare_noua!=[]:
+                    stari_finale_pt_noul_afd.append("".join(stare_noua))
+                indicator_finale = False
+                if stare_noua != []:
+                    if cheie in dictionar_afd:                                                 #aici verific daca starea nou obtinuta nu e deja
+                        if muchie not in dictionar_afd[cheie]:                                 #adaugata in automat
+                            dictionar_afd[cheie][muchie] = copy.deepcopy(stare_noua)
+                            lista_stari_vechi_din_noi.append(copy.deepcopy(stare_noua))
+                            lista_stari_noi.append("".join(stare_noua))
+                    else:
+                        dictionar_afd[cheie] = {muchie: []}
+                        dictionar_afd[cheie][muchie] = copy.deepcopy(stare_noua)
+                        lista_stari_vechi_din_noi.append(copy.deepcopy(stare_noua))
+                        lista_stari_noi.append("".join(stare_noua))
+                    stare_noua.clear()
+
+        while bool(lista_stari_noi):                                                          #cat timp mai sunt stari noi, fac acelasi
+            cheie = lista_stari_noi[0]                                                        #procedeu de mai sus
+            for muchie in obiect.ob.lista_muchii:
+                if muchie != 'l':
+                    for stare in lista_stari_vechi_din_noi[0]:
+                        if muchie in obiect.ob.dictionar[stare]:
+                            for stare_veche in obiect.ob.dictionar[stare][muchie]:
+                                if stare_veche not in stare_noua:
+                                    stare_noua.append(stare_veche)
+                                    if stare_veche in obiect.ob.stari_finale:
+                                        indicator_finale = True
+                    stare_noua.sort()
+                    if stare_noua != []:
+                        if indicator_finale == True and "".join(stare_noua) not in stari_finale_pt_noul_afd:
+                            stari_finale_pt_noul_afd.append("".join(stare_noua))
+                        indicator_finale = False
+
+                        if cheie in dictionar_afd:
+                            if muchie not in dictionar_afd[cheie]:
+                                dictionar_afd[cheie][muchie] = copy.deepcopy(stare_noua)
+                                if stare_noua not in lista_stari_vechi_din_noi and "".join(
+                                        stare_noua) not in lista_stari_noi:
+                                    lista_stari_vechi_din_noi.append(copy.deepcopy(stare_noua))
+                                    lista_stari_noi.append("".join(stare_noua))
+                        else:
+                            dictionar_afd[cheie] = {muchie: []}
+                            dictionar_afd[cheie][muchie] = copy.deepcopy(stare_noua)
+                            if stare_noua not in lista_stari_vechi_din_noi and "".join(stare_noua) not in lista_stari_noi:
+                                lista_stari_vechi_din_noi.append(copy.deepcopy(stare_noua))
+                                lista_stari_noi.append("".join(stare_noua))
+                        stare_noua.clear()
+            lista_stari_noi.remove(lista_stari_noi[0])                                 #elimin starile pe care le-am parcurs
+            lista_stari_vechi_din_noi.remove(lista_stari_vechi_din_noi[0])
+
+        with open("output_converter.txt", "w") as f:
+            f.write("".join(obiect.lambda_inchidere_stare_intitiala) + "\n")
+            print("".join(obiect.lambda_inchidere_stare_intitiala))
+            for stare in stari_finale_pt_noul_afd:
+                f.write(stare + " ")
+                print(stare,end=" ")
+            print()
+            for stare_curenta in list(dictionar_afd.keys()):
+                for muchie in list(dictionar_afd[stare_curenta].keys()):
+                    f.write("\n" + stare_curenta + " " + muchie + " " + "".join(dictionar_afd[stare_curenta][muchie]))
+                    print(stare_curenta,muchie,"".join(dictionar_afd[stare_curenta][muchie]),sep=" ")
+
 def meniu():
     print('START: Apasati 1','EXIT: Apasati 0',sep='\n')
     tasta=int(input())
@@ -315,8 +433,8 @@ def meniu():
         print('SFARSIT',emojize(':slightly_frowning_face:'))
     else:
         print('\nBuna alegere',emojize(':thumbs_up:'))
-        print('Pentru a schimba inputul, verificati fisierele input_afd.txt, input_afn.txt si input_generator.txt\n')
-        print('Ce doriti sa efectuati?\n','AFD: Apasati 1\n','AFN: Apasati 2\n','GENERAREA TUTUROR CUVINTELOR ACCEPTATE CU O LUNGIME MAXIMA N: Apasati 3\n','Nimic, la revedere',emojize(':waving_hand:'),': Apasati 0',sep='')
+        print('Pentru a schimba inputul, verificati fisierele input_afd.txt, input_afn.txt, input_generator.txt si input_converter.txt\n')
+        print('Ce doriti sa efectuati?\n','AFD: Apasati 1\n','AFN: Apasati 2\n','GENERAREA TUTUROR CUVINTELOR ACCEPTATE CU O LUNGIME MAXIMA N: Apasati 3\n','TRANSFORMARE λ-NFA INTR-UN DFA: Apasati 4\n','Nimic, la revedere',emojize(':waving_hand:'),': Apasati 0',sep='')
         tasta = int(input())
         while tasta!=0:
             if tasta==1:
@@ -325,13 +443,16 @@ def meniu():
             elif tasta==2:
                 ob2 = AFN("input_afn.txt")
                 ob2.afn()
-            else:
+            elif tasta==3:
                 nr_max=int(input("Introduceti lungimea maxima= "))
                 ob3=GENERATOR(nr_max)
                 ob3.back(0,[])
                 for cuvant in ob3.lista_cuvinte:
                     print(''.join(cuvant))
-            print('\nMai doriti sa efectuati altceva?\n','Inca un AFD: Apasati 1\n','Inca un AFN: Apasati 2\n','GENERAREA TUTUROR CUVINTELOR ACCEPTATE CU O LUNGIME MAXIMA N: Apasati 3\n','Nu, la revedere',emojize(':waving_hand:'),': Apasati 0',sep='')
+            elif tasta==4:
+                ob4=CONVERTER()
+                ob4.convertire()
+            print('\nMai doriti sa efectuati altceva?\n','Inca un AFD: Apasati 1\n','Inca un AFN: Apasati 2\n','GENERAREA TUTUROR CUVINTELOR ACCEPTATE CU O LUNGIME MAXIMA N: Apasati 3\n','TRANSFORMARE λ-NFA INTR-UN DFA: Apasati 4\n','Nu, la revedere',emojize(':waving_hand:'),': Apasati 0',sep='')
             tasta = int(input())
         print("SFARSIT",emojize(':grinning_face:'))
 
