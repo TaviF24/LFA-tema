@@ -25,6 +25,7 @@ The above input looks like this:
 
 <img width="592" alt="Screenshot 2023-09-02 at 18 26 47" src="https://github.com/TaviF24/LFA-project/assets/118764142/d92b0eb5-b15f-43bf-b054-ba99efb9c1b3">
 
+
 >[!NOTE]
 >You can use any characters for the states and symbols, except the '**l**' character.
 >For Lambda-NFAs, '**l**' means *lambda*.
