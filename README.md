@@ -13,7 +13,8 @@ The [main.py](main.py) file has all the tasks solved, the previous files are jus
 For every input file, the format is the same.
 
 >[!NOTE]
->For Lambda-NFAs, *l* means *lambda*.
+>You can use any characters for the states and symbols, except the '**l**' character.
+>For Lambda-NFAs, ***l*** means *lambda*.
 
 ```
 q0          //the starting state
