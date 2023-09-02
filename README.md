@@ -46,5 +46,18 @@ The above input looks like this:
 
 <img width="498" alt="Screenshot 2023-09-02 at 18 40 43" src="https://github.com/TaviF24/LFA-project/assets/118764142/827f6ad9-ad94-46f2-9acf-b7e97077dab9">
 
+## The output
+
+The result of ```Converting a Lambda-NFA to a DFA``` will be in the [output_converter.txt](output_converter.txt) file, with the same format as the input.
+
+>[!NOTE]
+>The new states are created by concatenating old states.
+
+## What I used
+- Operating system: MacOS
+- Language: Python 3.10
+- IDE: PyCharm 2022.2.5
+
+
 
 
