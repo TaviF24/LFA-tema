@@ -12,10 +12,6 @@ The [main.py](main.py) file has all the tasks solved, the previous files are jus
 
 For every input file, the format is the same.
 
->[!NOTE]
->You can use any characters for the states and symbols, except the '**l**' character.
->For Lambda-NFAs, ***l*** means *lambda*.
-
 ```
 q0          //the starting state
 q1 q3       //the final states
@@ -28,4 +24,26 @@ q2 2 q3
 The above input looks like this:
 
 <img width="592" alt="Screenshot 2023-09-02 at 18 26 47" src="https://github.com/TaviF24/LFA-project/assets/118764142/d92b0eb5-b15f-43bf-b054-ba99efb9c1b3">
+
+>[!NOTE]
+>You can use any characters for the states and symbols, except the '**l**' character.
+>For Lambda-NFAs, '**l**' means *lambda*.
+
+
+```
+q0          //the starting state
+q4          //the final states
+q0 + q1     //the current state - the symbol - the next state  
+q0 l q2
+q1 4 q2
+q2 0 q3
+q3 2 q4
+q3 3 q4
+q3 7 q4   
+```
+The above input looks like this:
+
+<img width="498" alt="Screenshot 2023-09-02 at 18 40 43" src="https://github.com/TaviF24/LFA-project/assets/118764142/827f6ad9-ad94-46f2-9acf-b7e97077dab9">
+
+
 
